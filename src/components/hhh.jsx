@@ -4,7 +4,6 @@ import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { NewSaleModal } from './NewSaleModal';
 
 const TerminixPakistan = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -1437,8 +1436,6 @@ const TerminixPakistan = () => {
 
       {showAuthModal && <AuthModal />}
       {showAddModal === 'payment' && <PaymentModal />}
-      {showAddModal === 'sale' && <NewSaleModal />}
-
     </div>
   );
 };
