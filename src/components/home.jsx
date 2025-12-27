@@ -1,11 +1,46 @@
 import React, { useState } from 'react';
-import { Shield, TrendingUp, DollarSign, Package, Users, AlertCircle, Plus, ArrowUpRight, ArrowDownRight, CreditCard, FileText, Calendar, Search, Filter, Download, Bell, Settings, LogOut, Eye, Edit2, Trash2, X, Check, ChevronDown, BarChart3, Activity, Zap, Clock, CheckCircle, XCircle } from 'lucide-react';
+import {
+  Shield,
+  TrendingUp,
+  DollarSign,
+  Package,
+  Users,
+  AlertCircle,
+  Plus,
+  ArrowUpRight,
+  ArrowDownRight,
+  CreditCard,
+  FileText,
+  Calendar,
+  Search,
+  Filter,
+  Download,
+  Bell,
+  Settings,
+  LogOut,
+  Eye,
+  Edit2,
+  Trash2,
+  X,
+  Check,
+  ChevronDown,
+  BarChart3,
+  Activity,
+  Zap,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Building2
+} from "lucide-react";
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { NewSaleModal } from './NewSaleModal';
 
+import logo from '../assets/image.png';
+import { NewSaleModal } from './NewSaleModal';
+import { InventoryScreen } from './InventoryScreen';
+// import { SalesScreen } from './SalesScreen';
 const TerminixPakistan = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [activeScreen, setActiveScreen] = useState('dashboard');
@@ -127,7 +162,7 @@ const TerminixPakistan = () => {
          <div className="p-12 text-white">
            <div className="flex items-center gap-4 mb-8">
              <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur">
-               <Shield className="w-12 h-12" />
+               <img src={logo} alt="Terminix Logo" className="w-20 h-20" />
              </div>
              <div>
                <h1 className="text-5xl font-bold">Terminix</h1>
@@ -174,7 +209,7 @@ const TerminixPakistan = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-teal-600 to-green-600 rounded-xl flex items-center justify-center">
-              <Shield className="text-white" size={24} />
+               <img src={logo} alt="Terminix Logo" className="w-24" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-800">Terminix Pakistan</h1>
@@ -621,171 +656,294 @@ const TerminixPakistan = () => {
     </div>
   );
 
-  // Party Ledger Screen
-  const PartyLedgerScreen = () => {
-    const [ledgerType, setLedgerType] = useState('customers');
-    
-    const parties = [
-      { id: 1, name: 'Mr. Ahmed Khan', type: 'customer', opening: 0, balance: -5000, transactions: 12, lastActivity: '2 hours ago' },
-      { id: 2, name: 'ABC Industries', type: 'customer', opening: 20000, balance: 45000, transactions: 8, lastActivity: '5 hours ago' },
-      { id: 3, name: 'DHA Maintenance', type: 'customer', opening: 50000, balance: 80000, transactions: 24, lastActivity: '1 day ago' },
-      { id: 4, name: 'ChemSupply Ltd', type: 'supplier', opening: -30000, balance: -45000, transactions: 15, lastActivity: '3 hours ago' },
-      { id: 5, name: 'Import Chemicals Co', type: 'supplier', opening: -80000, balance: -120000, transactions: 28, lastActivity: '6 hours ago' }
-    ];
 
-    const transactions = [
-      { id: 1, date: '2024-12-27 10:30 AM', type: 'sale', amount: 25000, balance: -5000, ref: 'INV-001', desc: 'Pest Control Service' },
-      { id: 2, date: '2024-12-26 03:15 PM', type: 'payment', amount: -20000, balance: -30000, ref: 'PAY-045', desc: 'Partial Payment Received' },
-      { id: 3, date: '2024-12-25 11:20 AM', type: 'sale', amount: 15000, balance: -10000, ref: 'INV-002', desc: 'Fumigation Service' }
-    ];
+const LedgerManagementScreen = () => {
+  const [activeTab, setActiveTab] = useState('customers'); // 'customers', 'suppliers', 'banks'
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedParty, setSelectedParty] = useState(null);
 
-    const filteredParties = parties.filter(p => p.type === ledgerType);
+  // Mock Data
+  const parties = [
+    { id: 1, name: 'Mr. Ahmed Khan', type: 'customer', department: 'Residential', opening: 0, balance: -75000, transactions: 18, lastActivity: '2025-12-27', overdue: true },
+    { id: 2, name: 'ABC Industries', type: 'customer', department: 'Commercial', opening: 20000, balance: 120000, transactions: 12, lastActivity: '2025-12-28', overdue: false },
+    { id: 3, name: 'DHA Maintenance Society', type: 'customer', department: 'Government', opening: 50000, balance: 95000, transactions: 31, lastActivity: '2025-12-26', overdue: true },
+    { id: 4, name: 'ChemSupply Ltd', type: 'supplier', department: 'Chemicals', opening: -30000, balance: -68000, transactions: 22, lastActivity: '2025-12-28', overdue: false },
+    { id: 5, name: 'Import Chemicals Co', type: 'supplier', department: 'Import', opening: -80000, balance: -145000, transactions: 35, lastActivity: '2025-12-25', overdue: true }
+  ];
 
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-800">Party Ledger Management</h2>
-            <p className="text-gray-600 mt-1">Track customer and supplier accounts</p>
-          </div>
-          <button className="px-6 py-3 bg-gradient-to-r from-teal-600 to-green-600 text-white rounded-xl hover:shadow-xl flex items-center gap-2 font-bold">
-            <Plus size={20} />
-            Add Party
-          </button>
+  const banks = [
+    { id: 1, name: 'Habib Bank Limited', accountNo: 'PKN123456789', balance: 1850000, transactions: 45, lastActivity: '2025-12-28' },
+    { id: 2, name: 'Meezan Bank', accountNo: 'PKN987654321', balance: 920000, transactions: 28, lastActivity: '2025-12-27' },
+    { id: 3, name: 'Bank Alfalah', accountNo: 'PKN555666777', balance: 450000, transactions: 19, lastActivity: '2025-12-26' }
+  ];
+
+  const transactions = [
+    { id: 1, date: '2025-12-27', type: 'sale', amount: 75000, balance: -75000, ref: 'INV-0481', desc: 'Annual Pest Control Contract' },
+    { id: 2, date: '2025-12-20', type: 'payment', amount: -50000, balance: -25000, ref: 'PAY-112', desc: 'Cheque Payment Received' },
+    { id: 3, date: '2025-11-15', type: 'sale', amount: 50000, balance: 25000, ref: 'INV-0420', desc: 'Fumigation Service' },
+    { id: 4, date: '2025-10-10', type: 'sale', amount: 30000, balance: 55000, ref: 'INV-0399', desc: 'Termite Treatment' }
+  ];
+
+  const bankTransactions = [
+    { id: 1, date: '2025-12-28', type: 'deposit', amount: 200000, balance: 1850000, ref: 'DEP-891', desc: 'Customer Payment - ABC Industries' },
+    { id: 2, date: '2025-12-27', type: 'withdrawal', amount: -150000, balance: 1650000, ref: 'CHQ-445', desc: 'Supplier Payment - ChemSupply Ltd' },
+    { id: 3, date: '2025-12-26', type: 'transfer', amount: -80000, balance: 1800000, ref: 'TRF-112', desc: 'Transfer to Meezan Bank' },
+    { id: 4, date: '2025-12-25', type: 'deposit', amount: 300000, balance: 1880000, ref: 'DEP-890', desc: 'Cash Deposit - Collections' }
+  ];
+
+  // Filtering logic
+  const filteredItems = activeTab === 'banks' 
+    ? banks.filter(b => b.name.toLowerCase().includes(searchQuery.toLowerCase()) || b.accountNo.includes(searchQuery))
+    : parties.filter(p => 
+        p.type === (activeTab === 'customers' ? 'customer' : 'supplier') &&
+        (p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+         p.department.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+
+  const selectedTransactions = activeTab === 'banks' ? bankTransactions : transactions;
+
+  // Calculate summaries
+  const totalReceivable = parties.filter(p => p.type === 'customer').reduce((sum, p) => sum + Math.max(0, -p.balance), 0);
+  const totalPayable = parties.filter(p => p.type === 'supplier').reduce((sum, p) => sum + Math.max(0, p.balance), 0);
+  const totalOverdue = parties.filter(p => p.overdue).length;
+
+  return (
+    <div className="space-y-8 pb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-4xl font-bold text-gray-900">Ledger Management</h2>
+          <p className="text-gray-600 mt-2">Track parties, bank accounts, transactions & reconciliations</p>
         </div>
+        <button className="px-6 py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl hover:shadow-xl flex items-center gap-3 font-semibold transition">
+          <Plus size={22} />
+          {activeTab === 'banks' ? 'Add Bank Account' : 'Add Party'}
+        </button>
+      </div>
 
-        {/* Ledger Type Toggle */}
-        <div className="flex gap-3">
+      {/* Tabs */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex gap-3 flex-1">
           <button
-            onClick={() => setLedgerType('customers')}
-            className={`flex-1 py-4 rounded-xl font-bold transition ${
-              ledgerType === 'customers'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-300'
+            onClick={() => { setActiveTab('customers'); setSelectedParty(null); }}
+            className={`flex-1 py-4 px-6 rounded-xl font-bold transition flex items-center justify-center gap-3 ${
+              activeTab === 'customers'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xl'
+                : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-gray-300'
             }`}
           >
-            <Users className="inline mr-2" size={20} />
+            <Users size={22} />
             Customers
           </button>
           <button
-            onClick={() => setLedgerType('suppliers')}
-            className={`flex-1 py-4 rounded-xl font-bold transition ${
-              ledgerType === 'suppliers'
-                ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-                : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-300'
+            onClick={() => { setActiveTab('suppliers'); setSelectedParty(null); }}
+            className={`flex-1 py-4 px-6 rounded-xl font-bold transition flex items-center justify-center gap-3 ${
+              activeTab === 'suppliers'
+                ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-xl'
+                : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-gray-300'
             }`}
           >
-            <Package className="inline mr-2" size={20} />
+            <Package size={22} />
             Suppliers
           </button>
+          <button
+            onClick={() => { setActiveTab('banks'); setSelectedParty(null); }}
+            className={`flex-1 py-4 px-6 rounded-xl font-bold transition flex items-center justify-center gap-3 ${
+              activeTab === 'banks'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl'
+                : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <Building2 size={22} />
+            Bank Accounts
+          </button>
+        </div>
+      </div>
+
+      {/* Search & Summary */}
+      <div className="grid lg:grid-cols-5 gap-6">
+        <div className="lg:col-span-2">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder={`Search by ${activeTab === 'banks' ? 'bank/account' : 'name/department'}...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-teal-500 transition"
+            />
+          </div>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <p className="text-gray-600 text-sm font-medium mb-2">Total {ledgerType === 'customers' ? 'Receivable' : 'Payable'}</p>
-            <p className="text-3xl font-bold text-teal-600">₨{ledgerType === 'customers' ? '120,000' : '165,000'}</p>
-          </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <p className="text-gray-600 text-sm font-medium mb-2">Active Parties</p>
-            <p className="text-3xl font-bold text-gray-800">{filteredParties.length}</p>
-          </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <p className="text-gray-600 text-sm font-medium mb-2">Overdue</p>
-            <p className="text-3xl font-bold text-orange-600">2</p>
-          </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-            <p className="text-gray-600 text-sm font-medium mb-2">This Month</p>
-            <p className="text-3xl font-bold text-green-600">₨450,000</p>
-          </div>
+        <div className="lg:col-span-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {activeTab !== 'banks' ? (
+            <>
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <p className="text-gray-600 text-sm font-medium">Total {activeTab === 'customers' ? 'Receivable' : 'Payable'}</p>
+                <p className="text-3xl font-bold text-teal-600 mt-2">₨{activeTab === 'customers' ? totalReceivable.toLocaleString() : totalPayable.toLocaleString()}</p>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <p className="text-gray-600 text-sm font-medium">Active Parties</p>
+                <p className="text-3xl font-bold text-gray-800 mt-2">{filteredItems.length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <p className="text-gray-600 text-sm font-medium flex items-center gap-2">
+                  Overdue Payments
+                  {totalOverdue > 0 && <AlertCircle className="text-red-500" size={18} />}
+                </p>
+                <p className="text-3xl font-bold text-red-600 mt-2">{totalOverdue}</p>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <p className="text-gray-600 text-sm font-medium">This Month Activity</p>
+                <p className="text-3xl font-bold text-green-600 mt-2">₨680,000</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <p className="text-gray-600 text-sm font-medium">Total Bank Balance</p>
+                <p className="text-3xl font-bold text-purple-600 mt-2">₨3,220,000</p>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <p className="text-gray-600 text-sm font-medium">Active Accounts</p>
+                <p className="text-3xl font-bold text-gray-800 mt-2">{banks.length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <p className="text-gray-600 text-sm font-medium">Transactions (Dec)</p>
+                <p className="text-3xl font-bold text-indigo-600 mt-2">92</p>
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <button className="w-full h-full flex items-center justify-center gap-3 text-teal-600 font-bold hover:bg-teal-50 rounded-lg transition">
+                  <Download size={24} />
+                  Generate Statement
+                </button>
+              </div>
+            </>
+          )}
         </div>
+      </div>
 
-        {/* Party Cards Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {filteredParties.map(party => (
-            <div key={party.id} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition">
-              <div className="flex items-start justify-between mb-4">
+      {/* List Grid */}
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-4">
+          {filteredItems.map(item => (
+            <div
+              key={item.id}
+              onClick={() => setSelectedParty(item)}
+              className={`bg-white rounded-2xl p-6 shadow-lg border ${selectedParty?.id === item.id ? 'border-teal-500 ring-2 ring-teal-200' : 'border-gray-100'} hover:shadow-xl transition cursor-pointer`}
+            >
+              <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-800 mb-1">{party.name}</h3>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Clock size={14} />
-                    <span>Last activity: {party.lastActivity}</span>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-bold text-gray-900">{item.name}</h3>
+                    {item.overdue && activeTab !== 'banks' && (
+                      <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full flex items-center gap-1">
+                        <AlertCircle size={14} />
+                        Overdue
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-gray-500 mt-1">
+                    {activeTab === 'banks' ? item.accountNo : item.department}
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mt-3">
+                    <Clock size={16} />
+                    Last activity: {item.lastActivity}
                   </div>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-green-500 rounded-xl flex items-center justify-center text-white font-bold text-xl">
-                  {party.name.charAt(0)}
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-white font-bold text-2xl ${
+                  activeTab === 'customers' ? 'bg-gradient-to-br from-blue-500 to-indigo-600' :
+                  activeTab === 'suppliers' ? 'bg-gradient-to-br from-orange-500 to-red-600' :
+                  'bg-gradient-to-br from-purple-500 to-pink-600'
+                }`}>
+                  {item.name.charAt(0)}
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Opening</p>
-                  <p className="font-bold text-gray-800">₨{Math.abs(party.opening).toLocaleString()}</p>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Transactions</p>
-                  <p className="font-bold text-gray-800">{party.transactions}</p>
-                </div>
-                <div className="text-center p-3 bg-teal-50 rounded-lg">
-                  <p className="text-xs text-teal-600 mb-1">Balance</p>
-                  <p className={`font-bold ${party.balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                    ₨{Math.abs(party.balance).toLocaleString()}
+              <div className="grid grid-cols-3 gap-4 mt-6">
+                <div className="text-center bg-gray-50 rounded-xl py-3">
+                  <p className="text-xs text-gray-600">Balance</p>
+                  <p className={`text-xl font-bold ${item.balance < 0 ? 'text-red-600' : item.balance > 0 ? 'text-green-600' : 'text-gray-800'}`}>
+                    ₨{Math.abs(item.balance || 0).toLocaleString()}
                   </p>
                 </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button className="flex-1 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 font-semibold text-sm">
-                  View Ledger
-                </button>
-                <button className="flex-1 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 font-semibold text-sm">
-                  Add Payment
-                </button>
+                <div className="text-center bg-gray-50 rounded-xl py-3">
+                  <p className="text-xs text-gray-600">Transactions</p>
+                  <p className="text-xl font-bold text-gray-800">{item.transactions}</p>
+                </div>
+                <div className="text-center bg-teal-50 rounded-xl py-3">
+                  <p className="text-xs text-teal-700">Click to View</p>
+                  <p className="text-lg font-bold text-teal-600">Details →</p>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Transaction Timeline */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">Transaction Timeline - Mr. Ahmed Khan</h3>
-          <div className="space-y-4">
-            {transactions.map((txn, idx) => (
-              <div key={txn.id} className="flex gap-4">
-                <div className="flex flex-col items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    txn.type === 'sale' ? 'bg-green-100' : 'bg-blue-100'
-                  }`}>
-                    {txn.type === 'sale' ? <ArrowUpRight className="text-green-600" size={20} /> : <ArrowDownRight className="text-blue-600" size={20} />}
-                  </div>
-                  {idx < transactions.length - 1 && <div className="w-0.5 h-16 bg-gray-200"></div>}
-                </div>
-                <div className="flex-1 pb-6">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="font-semibold text-gray-800">{txn.desc}</p>
-                      <p className="text-sm text-gray-500">{txn.date}</p>
+        {/* Transaction Timeline / Bank Statement */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 sticky top-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">
+                {activeTab === 'banks' ? 'Recent Bank Activity' : `Transactions - ${selectedParty?.name || 'Select a party'}`}
+              </h3>
+              {activeTab === 'banks' && (
+                <button className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-1">
+                  <Download size={16} />
+                  Export
+                </button>
+              )}
+            </div>
+
+            {selectedParty || activeTab === 'banks' ? (
+              <div className="space-y-5">
+                {selectedTransactions.map((txn, idx) => (
+                  <div key={txn.id} className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        txn.type === 'sale' || txn.type === 'deposit' ? 'bg-green-100' :
+                        txn.type === 'payment' || txn.type === 'withdrawal' ? 'bg-blue-100' :
+                        'bg-purple-100'
+                      }`}>
+                        {txn.type === 'sale' || txn.type === 'deposit' ? <ArrowUpRight className="text-green-600" size={20} /> :
+                         txn.type === 'transfer' ? <ArrowDownRight className="text-purple-600" size={20} /> :
+                         <ArrowDownRight className="text-blue-600" size={20} />}
+                      </div>
+                      {idx < selectedTransactions.length - 1 && <div className="w-0.5 h-16 bg-gray-200 mt-2"></div>}
                     </div>
-                    <span className={`px-3 py-1 rounded-lg text-sm font-bold ${
-                      txn.type === 'sale' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                    }`}>
-                      {txn.ref}
-                    </span>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-800">{txn.desc}</p>
+                      <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                        <Calendar size={14} />
+                        {txn.date}
+                      </p>
+                      <div className="flex items-center justify-between mt-3">
+                        <span className={`font-bold text-lg ${
+                          txn.amount > 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {txn.amount > 0 ? '+' : ''}₨{Math.abs(txn.amount).toLocaleString()}
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          Bal: ₨{Math.abs(txn.balance).toLocaleString()}
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
+                        {txn.ref}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className={`font-bold ${txn.type === 'sale' ? 'text-green-600' : 'text-blue-600'}`}>
-                      {txn.type === 'sale' ? '+' : ''}₨{Math.abs(txn.amount).toLocaleString()}
-                    </span>
-                    <span className="text-gray-600">Balance: <span className="font-bold">₨{Math.abs(txn.balance).toLocaleString()}</span></span>
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <p className="text-gray-500 text-center py-12">Click on a party to view transaction history</p>
+            )}
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
+
 
   // Bank & Cash Screen
   const BankCashScreen = () => {
@@ -918,84 +1076,6 @@ const TerminixPakistan = () => {
       </div>
     );
   };
-
-  // Inventory Screen
-  const InventoryScreen = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-800">Inventory Management</h2>
-          <p className="text-gray-600 mt-1">Track stock levels and product availability</p>
-        </div>
-        <button onClick={() => setShowAddModal('inventory')} className="px-6 py-3 bg-gradient-to-r from-teal-600 to-green-600 text-white rounded-xl hover:shadow-xl flex items-center gap-2 font-bold">
-          <Plus size={20} />
-          Add Product
-        </button>
-      </div>
-
-      {/* Inventory Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {inventoryData.map(item => {
-          const dept = departments.find(d => d.id === item.dept);
-          const stockPercentage = (item.stock / item.min) * 100;
-          const isLow = item.status === 'low';
-          
-          return (
-            <div key={item.id} className={`bg-white rounded-2xl p-6 shadow-lg border-2 transition hover:shadow-xl ${
-              isLow ? 'border-orange-300 bg-orange-50' : 'border-gray-100'
-            }`}>
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-800 mb-1">{item.name}</h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{dept?.icon}</span>
-                    <span className="text-sm text-gray-600">{dept?.short}</span>
-                  </div>
-                </div>
-                {isLow && (
-                  <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center animate-pulse">
-                    <AlertCircle className="text-white" size={20} />
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600 text-sm font-medium">Current Stock</span>
-                  <span className={`text-2xl font-bold ${isLow ? 'text-orange-600' : 'text-green-600'}`}>
-                    {item.stock} {item.unit}
-                  </span>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>Stock Level</span>
-                    <span>Min: {item.min} {item.unit}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div 
-                      className={`h-3 rounded-full transition-all ${isLow ? 'bg-orange-500' : 'bg-green-500'}`}
-                      style={{ width: `${Math.min(stockPercentage, 100)}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
-                  <div>
-                    <p className="text-xs text-gray-500">Stock Value</p>
-                    <p className="text-lg font-bold text-gray-800">₨{item.value.toLocaleString()}</p>
-                  </div>
-                  <button className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 font-semibold text-sm">
-                    Update
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
 
   // Expenses Screen
   const ExpensesScreen = () => {
@@ -1426,9 +1506,9 @@ const TerminixPakistan = () => {
         <Sidebar />
         <main className="flex-1 p-8 max-w-[1600px]">
           {activeScreen === 'dashboard' && <DashboardScreen />}
-          {activeScreen === 'sales' && <SalesScreen />}
+          {activeScreen === 'sales' && <SalesScreen/>}
           {activeScreen === 'inventory' && <InventoryScreen />}
-          {activeScreen === 'parties' && <PartyLedgerScreen />}
+          {activeScreen === 'parties' && <LedgerManagementScreen />}
           {activeScreen === 'bank' && <BankCashScreen />}
           {activeScreen === 'expenses' && <ExpensesScreen />}
           {activeScreen === 'reports' && <AuditLogScreen />}
