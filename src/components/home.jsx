@@ -161,16 +161,16 @@ const TerminixPakistan = () => {
        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center bg-white/10 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl">
          <div className="p-12 text-white">
            <div className="flex items-center gap-4 mb-8">
-             <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur">
+             {/* <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur">
                <img src={logo} alt="Terminix Logo" className="w-20 h-20" />
-             </div>
+             </div> */}
              <div>
-               <h1 className="text-5xl font-bold">Terminix</h1>
-               <p className="text-2xl font-light opacity-90">Pakistan</p>
+               {/* <h1 className="text-5xl font-bold">Terminix</h1> */}
+               {/* <p className="text-2xl font-light opacity-90">Pakistan</p> */}
              </div>
            </div>
            <h2 className="text-4xl font-bold mb-6">Enterprise Management System</h2>
-           <p className="text-xl opacity-90 mb-10">Professional solution for pest control & fumigation businesses</p>
+           {/* <p className="text-xl opacity-90 mb-10">Professional solution for pest control & fumigation businesses</p> */}
            <div className="space-y-4">
              {['Multi-Department Control', 'Real-Time Analytics', 'Secure Authorization', 'Inventory Alerts', 'Detailed Reporting'].map((feature, i) => (
                <div key={i} className="flex items-center gap-4">
@@ -208,11 +208,11 @@ const TerminixPakistan = () => {
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-teal-600 to-green-600 rounded-xl flex items-center justify-center">
+            {/* <div className="w-12 h-12 bg-gradient-to-br from-teal-600 to-green-600 rounded-xl flex items-center justify-center">
                <img src={logo} alt="Terminix Logo" className="w-24" />
-            </div>
+            </div> */}
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Terminix Pakistan</h1>
+              {/* <h1 className="text-xl font-bold text-gray-800">Terminix Pakistan</h1> */}
               <p className="text-xs text-gray-500">Business Management System</p>
             </div>
           </div>
