@@ -165,7 +165,7 @@ const TerminixPakistan = () => {
                <img src={logo} alt="Terminix Logo" className="w-20 h-20" />
              </div>
              <div>
-               <h1 className="text-5xl font-bold">Terminix</h1> */}
+               <h1 className="text-5xl font-bold">Terminix</h1> 
                <p className="text-2xl font-light opacity-90">Pakistan</p>
              </div>
            </div>
