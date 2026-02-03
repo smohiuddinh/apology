@@ -1,11 +1,11 @@
-import TerminixPakistan from './components/home';
+import ApologyForKashuf from './components/apology';
 
 
 function App() {
 
   return (
     <div >
-    <TerminixPakistan/>
+    <ApologyForKashuf/>
     </div>
   )
 }
