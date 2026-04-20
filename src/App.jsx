@@ -2,6 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import EventManagement from "./components/apology";
 import FeaturedEvents from "./components/home";
 import Home from "./components/home";
+import AuthPage from "./components/auth";
+import About from './components/About';
+import Contact from "./components/contact";
+import EventDetails from './components/event-details';
 function App() {
   return (
     <BrowserRouter>
@@ -9,7 +13,16 @@ function App() {
         <Route path="/dashboard" element={<EventManagement />} />
         <Route path="/featured" element={<FeaturedEvents />} />
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<AuthPage />} />
 
+        <Route path="/about" element={<About />} />
+        <Route
+          path="/event/:id"
+          element={
+              <EventDetails />
+          }
+        />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </BrowserRouter>
   );

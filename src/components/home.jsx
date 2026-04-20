@@ -165,7 +165,7 @@ export default function Home() {
             transition={{ duration: 1 }}
             className="text-lg text-white tracking-widest uppercase mb-2 mt-20"
           >
-            Happenings
+            ICCD  
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: -40 }}
@@ -173,7 +173,7 @@ export default function Home() {
             transition={{ duration: 1 }}
             className="text-5xl md:text-7xl font-extrabold text-white leading-tight max-w-3xl"
           >
-            Find Latest Events & Meetups
+            Find Latest Events & Meetups Hosted By ICCD
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
