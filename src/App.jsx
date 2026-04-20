@@ -1,13 +1,18 @@
-import ApologyForKashuf from './components/apology';
-
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import EventManagement from "./components/apology";
+import FeaturedEvents from "./components/home";
+import Home from "./components/home";
 function App() {
-
   return (
-    <div >
-    <ApologyForKashuf/>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/dashboard" element={<EventManagement />} />
+        <Route path="/featured" element={<FeaturedEvents />} />
+        <Route path="/" element={<Home />} />
+
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
