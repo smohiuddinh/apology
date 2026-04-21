@@ -4,11 +4,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+// import { GoogleLogin } from "@react-oauth/google";
+// import { jwtDecode } from "jwt-decode";
 import loginImage from "../assets/2.jpg";
 
-// ✅ Validation Schemas
 const loginSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup.string().min(6, "Min 6 characters").required("Password is required"),
@@ -147,34 +146,34 @@ export default function AuthPage() {
     }
   };
 
-  const handleGoogleLogin = async (credentialResponse) => {
-    try {
-      const token = credentialResponse.credential;
-      const decoded = jwtDecode(token);
+  // const handleGoogleLogin = async (credentialResponse) => {
+  //   try {
+  //     const token = credentialResponse.credential;
+  //     const decoded = jwtDecode(token);
 
-      setLoading(true);
+  //     setLoading(true);
 
-      // Simulate Google login delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
+  //     // Simulate Google login delay
+  //     await new Promise((resolve) => setTimeout(resolve, 800));
 
-      const googleUser = {
-        id: Date.now(),
-        fullname: decoded.name || "Google User",
-        email: decoded.email,
-        role: "user",
-        token: "mock-google-token-" + Date.now(),
-        picture: decoded.picture,
-      };
+  //     const googleUser = {
+  //       id: Date.now(),
+  //       fullname: decoded.name || "Google User",
+  //       email: decoded.email,
+  //       role: "user",
+  //       token: "mock-google-token-" + Date.now(),
+  //       picture: decoded.picture,
+  //     };
 
-      handleAuthSuccess(googleUser);
-      alert("✅ Signed in with Google successfully!");
+  //     handleAuthSuccess(googleUser);
+  //     alert("✅ Signed in with Google successfully!");
 
-    } catch (err) {
-      setErrorMsg("Google authentication failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   } catch (err) {
+  //     setErrorMsg("Google authentication failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-white to-blue-50">
@@ -257,12 +256,12 @@ export default function AuthPage() {
           </form>
 
           {/* Google Login */}
-          <div className="mt-6 text-center">
+          {/* <div className="mt-6 text-center">
             <GoogleLogin
               onSuccess={handleGoogleLogin}
               onError={() => setErrorMsg("Google login failed")}
             />
-          </div>
+          </div> */}
 
           {/* Toggle between Login & Register */}
           <div className="text-center mt-6 text-sm text-gray-600">
