@@ -4,6 +4,7 @@ import * as yup from "yup";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import contactImage from "../assets/3.jpg";
+import Navbar from './Navbar';
 
 // ✅ Validation Schema
 const schema = yup.object().shape({
@@ -58,6 +59,8 @@ export default function Contact() {
 
   return (
     <section className="min-h-screen bg-gray-50">
+                <Navbar />
+      
       {/* Header / Banner Section */}
       <div
         className="relative bg-cover bg-center py-24 text-center"

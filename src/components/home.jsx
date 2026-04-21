@@ -207,12 +207,12 @@ export default function Home() {
           </h2>
         </div>
         <div className="relative max-w-6xl mx-auto px-6">
-          <button
+          {/* <button
             onClick={() => scrollContainer(recentRef, "left")}
             className="absolute left-0 top-1/2 -translate-y-1/2 bg-white border p-2 rounded-full shadow z-10"
           >
             <ArrowLeft size={20} />
-          </button>
+          </button> */}
           <div ref={recentRef} className="flex overflow-x-auto gap-6 scrollbar-hide px-10">
             {recentEvents.length > 0 ? (
               recentEvents.map((event) => (
@@ -224,12 +224,12 @@ export default function Home() {
               <p className="text-center text-gray-500 w-full">No events found.</p>
             )}
           </div>
-          <button
+          {/* <button
             onClick={() => scrollContainer(recentRef, "right")}
             className="absolute right-0 top-1/2 -translate-y-1/2 bg-white border p-2 rounded-full shadow z-10"
           >
             <ArrowRight size={20} />
-          </button>
+          </button> */}
         </div>
       </section>
 
@@ -249,12 +249,12 @@ export default function Home() {
           </h2>
         </div>
         <div className="relative max-w-6xl mx-auto px-6">
-          <button
+          {/* <button
             onClick={() => scrollContainer(recommendedRef, "left")}
             className="absolute left-0 top-1/2 -translate-y-1/2 bg-white border p-2 rounded-full shadow z-10"
           >
             <ArrowLeft size={20} />
-          </button>
+          </button> */}
           <div ref={recommendedRef} className="flex overflow-x-auto gap-6 scrollbar-hide px-10">
             {recommendedEvents.length > 0 ? (
               recommendedEvents.map((event) => (
@@ -268,12 +268,12 @@ export default function Home() {
               </p>
             )}
           </div>
-          <button
+          {/* <button
             onClick={() => scrollContainer(recommendedRef, "right")}
             className="absolute right-0 top-1/2 -translate-y-1/2 bg-white border p-2 rounded-full shadow z-10"
           >
             <ArrowRight size={20} />
-          </button>
+          </button> */}
         </div>
       </section>
     </>

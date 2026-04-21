@@ -11,7 +11,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/dashboard" element={<EventManagement />} />
-        <Route path="/featured" element={<FeaturedEvents />} />
+        <Route path="/featured-events" element={<FeaturedEvents />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<AuthPage />} />
 

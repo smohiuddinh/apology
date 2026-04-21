@@ -2,12 +2,15 @@ import { motion } from "framer-motion";
 import bannerImage from "../assets/3.jpg";
 import { useState } from "react";
 import CreateEventForm from './forms/CreateEventForm';
+import Navbar from './Navbar';
 
 export default function About() {
   const [showCreateEvent, setShowCreateEvent] = useState(false);
 
 
   return (
+    <>
+          <Navbar />
     <div className="w-full bg-gray-50 font-sansation ">
 
       {/* Hero Section with Image */}
@@ -103,6 +106,7 @@ export default function About() {
       </section>
         <CreateEventForm isOpen={showCreateEvent} onClose={() => setShowCreateEvent(false)} />
     </div>
-    
+    </>
+
   );
 }
