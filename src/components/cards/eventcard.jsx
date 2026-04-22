@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { Calendar, MapPin, Heart, Share2, Eye, X } from "lucide-react";
+import { Calendar, MapPin, Heart, Share2, Clock, Users, Layers, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function EventCard({ event }) {
   const [isSaved, setIsSaved] = useState(false);
-  const [views, setViews] = useState(event.views || 0);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
   const navigate = useNavigate();
@@ -31,314 +30,193 @@ export default function EventCard({ event }) {
 
   const handleShare = (platform) => {
     const eventURL = `${window.location.origin}/event/${event.id}`;
-    const text = encodeURIComponent(`${event.title} - ${event.description || "Check out this amazing event!"}\n${eventURL}`);
+    const text = encodeURIComponent(`${event.name} - ${event.description || ""}\n${eventURL}`);
     if (platform === "facebook") window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventURL)}`, "_blank");
     else if (platform === "whatsapp") window.open(`https://wa.me/?text=${text}`, "_blank");
-    else if (platform === "email") window.open(`mailto:?subject=${encodeURIComponent(event.title)}&body=${text}`, "_blank");
+    else if (platform === "email") window.open(`mailto:?subject=${encodeURIComponent(event.name)}&body=${text}`, "_blank");
     setShareModalOpen(false);
   };
 
   const handleViewDetails = () => {
-    setViews((prev) => prev + 1);
     navigate(`/event/${event.id}`, { state: { eventId: event.id } });
   };
 
-  const isPaid = event?.type?.toLowerCase() === "paid" || event?.price > 0;
-  const formatViews = (v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v;
-  const formatDate = (dt) => {
-    if (!dt) return "Date TBA";
-    return new Date(dt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const formatDate = (d) => {
+    if (!d) return "Date TBA";
+    return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
+
+  const formatTime = (t) => {
+    if (!t) return "";
+    const [h, m] = t.split(":");
+    const hour = parseInt(h);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    return `${hour % 12 || 12}:${m} ${ampm}`;
+  };
+
+  // Sector → color mapping
+  const sectorColors = {
+    Technology: "bg-blue-50 text-blue-700",
+    Health: "bg-green-50 text-green-700",
+    Arts: "bg-purple-50 text-purple-700",
+    Education: "bg-amber-50 text-amber-700",
+    Fashion: "bg-rose-50 text-rose-700",
+    default: "bg-slate-100 text-slate-600",
+  };
+  const sectorClass = sectorColors[event.sector] || sectorColors.default;
+
+  const typeColors = {
+    conference: "bg-blue-600",
+    workshop: "bg-violet-500",
+    fair: "bg-amber-500",
+    sports: "bg-green-500",
+    show: "bg-rose-500",
+    default: "bg-slate-500",
+  };
+  const typeColor = typeColors[event.type?.toLowerCase()] || typeColors.default;
 
   return (
     <>
-      <style>{`
-        .ec-card {
-          background: #ffffff;
-          border-radius: 16px;
-          overflow: hidden;
-          cursor: pointer;
-          width: 100%;
-          border: 1px solid rgba(0,0,0,0.07);
-          box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
-          position: relative;
-        }
-        .ec-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-        }
-        .ec-img-wrap {
-          position: relative;
-          height: 190px;
-          overflow: hidden;
-          background: #f3f4f6;
-        }
-        .ec-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.5s ease;
-        }
-        .ec-card:hover .ec-img { transform: scale(1.04); }
-        .ec-img-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 55%);
-          pointer-events: none;
-        }
-        .ec-badge {
-          position: absolute;
-          bottom: 12px;
-          left: 12px;
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          padding: 4px 10px;
-          border-radius: 100px;
-        }
-        .ec-badge-paid { background: #fef3c7; color: #92400e; }
-        .ec-badge-free { background: #d1fae5; color: #065f46; }
-        .ec-btns {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        .ec-btn {
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
-          border: none;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          backdrop-filter: blur(8px);
-          transition: transform 0.2s ease, background 0.2s ease;
-        }
-        .ec-btn:hover { transform: scale(1.12); }
-        .ec-btn-save { background: rgba(255,255,255,0.9); color: #374151; }
-        .ec-btn-save.saved { background: #ef4444; color: white; }
-        .ec-btn-save.pop { animation: ecPop 0.4s ease; }
-        @keyframes ecPop {
-          0% { transform: scale(1); }
-          40% { transform: scale(1.35); }
-          100% { transform: scale(1); }
-        }
-        .ec-btn-share { background: rgba(255,255,255,0.9); color: #374151; }
-        .ec-btn-share:hover { background: rgba(37,99,235,0.9); color: white; }
+      <div
+        onClick={handleViewDetails}
+        className="group bg-white rounded-2xl overflow-hidden cursor-pointer border border-black/[0.07] shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 flex flex-col"
+      >
+        {/* Top color bar by type */}
+        <div className={`h-1.5 w-full ${typeColor}`} />
 
-        .ec-body { padding: 16px; }
-        .ec-title {
-          font-size: 15px;
-          font-weight: 700;
-          color: #111827;
-          margin: 0 0 6px;
-          line-height: 1.4;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          transition: color 0.2s;
-        }
-        .ec-card:hover .ec-title { color: #2563eb; }
-        .ec-desc {
-          font-size: 12.5px;
-          color: #9ca3af;
-          line-height: 1.55;
-          margin: 0 0 14px;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-        .ec-meta { display: flex; flex-direction: column; gap: 7px; }
-        .ec-meta-row {
-          display: flex;
-          align-items: center;
-          gap: 7px;
-          font-size: 12px;
-          color: #6b7280;
-        }
-        .ec-meta-row svg { flex-shrink: 0; }
-        .ec-meta-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .ec-footer {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-top: 14px;
-          padding-top: 12px;
-          border-top: 1px solid #f3f4f6;
-        }
-        .ec-views { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: #d1d5db; }
-        .ec-cta {
-          font-size: 12px;
-          font-weight: 600;
-          background: #111827;
-          color: white;
-          border: none;
-          padding: 7px 16px;
-          border-radius: 100px;
-          cursor: pointer;
-          letter-spacing: 0.02em;
-          transition: background 0.2s ease, transform 0.2s ease;
-        }
-        .ec-cta:hover { background: #2563eb; transform: translateY(-1px); }
+        <div className="p-5 flex flex-col flex-1 gap-3.5">
 
-        /* Share Modal */
-        .ec-modal-bg {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.45);
-          backdrop-filter: blur(6px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 9999;
-          padding: 20px;
-          animation: ecFadeIn 0.18s ease;
-        }
-        @keyframes ecFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .ec-modal {
-          background: #ffffff;
-          border-radius: 20px;
-          padding: 28px 24px;
-          width: 100%;
-          max-width: 300px;
-          position: relative;
-          box-shadow: 0 24px 64px rgba(0,0,0,0.18);
-          animation: ecSlideUp 0.25s cubic-bezier(0.34,1.56,0.64,1);
-        }
-        @keyframes ecSlideUp {
-          from { opacity: 0; transform: translateY(24px) scale(0.96); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .ec-modal-close {
-          position: absolute;
-          top: 14px; right: 14px;
-          width: 28px; height: 28px;
-          border-radius: 50%;
-          border: none;
-          background: #f3f4f6;
-          color: #9ca3af;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background 0.15s;
-        }
-        .ec-modal-close:hover { background: #fee2e2; color: #ef4444; }
-        .ec-modal-title { font-size: 17px; font-weight: 700; color: #111827; margin: 0 0 4px; }
-        .ec-modal-sub { font-size: 12px; color: #9ca3af; margin: 0 0 20px; }
-        .ec-share-list { display: flex; flex-direction: column; gap: 8px; }
-        .ec-share-btn {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 14px;
-          border-radius: 12px;
-          border: none;
-          cursor: pointer;
-          font-size: 13.5px;
-          font-weight: 500;
-          transition: transform 0.15s ease, filter 0.15s ease;
-          text-align: left;
-        }
-        .ec-share-btn:hover { transform: translateX(4px); filter: brightness(0.95); }
-        .ec-share-icon {
-          width: 34px; height: 34px;
-          border-radius: 9px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 15px;
-          flex-shrink: 0;
-          color: white;
-          font-weight: 800;
-        }
-        .ec-fb { background: #eff6ff; color: #1d4ed8; }
-        .ec-fb .ec-share-icon { background: #1877f2; }
-        .ec-wa { background: #f0fdf4; color: #166534; }
-        .ec-wa .ec-share-icon { background: #25d366; }
-        .ec-em { background: #f9fafb; color: #374151; }
-        .ec-em .ec-share-icon { background: #374151; }
-      `}</style>
-
-      <div className="ec-card" onClick={handleViewDetails}>
-        <div className="ec-img-wrap">
-          <img
-            src={event.banner || event.image || "https://picsum.photos/id/1015/600/400"}
-            alt={event.title}
-            className="ec-img"
-          />
-          <div className="ec-img-overlay" />
-          <div className={`ec-badge ${isPaid ? "ec-badge-paid" : "ec-badge-free"}`}>
-            {isPaid ? "💰 Paid" : "🎟 Free"}
+          {/* Header row: name + action btns */}
+          <div className="flex items-start justify-between gap-2">
+            <h2 className="text-[15px] font-bold text-gray-900 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2 flex-1">
+              {event.name || event.title}
+            </h2>
+            <div className="flex gap-1.5 shrink-0 mt-0.5">
+              <button
+                onClick={handleSaveEvent}
+                className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-200
+                  ${isSaved
+                    ? "bg-red-500 border-red-500 text-white"
+                    : "border-gray-200 text-gray-400 hover:border-red-300 hover:text-red-400"
+                  } ${justSaved ? "scale-125" : "scale-100"}`}
+              >
+                <Heart size={13} fill={isSaved ? "white" : "none"} strokeWidth={isSaved ? 0 : 2} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); setShareModalOpen(true); }}
+                className="w-8 h-8 rounded-full flex items-center justify-center border border-gray-200 text-gray-400 hover:border-blue-300 hover:text-blue-500 transition-all duration-200"
+              >
+                <Share2 size={13} />
+              </button>
+            </div>
           </div>
-          <div className="ec-btns">
+
+          {/* Sector & Type badges */}
+          <div className="flex flex-wrap gap-2">
+            {event.sector && (
+              <span className={`text-[10.5px] font-semibold tracking-wide uppercase px-2.5 py-0.5 rounded-full ${sectorClass}`}>
+                {event.sector}
+              </span>
+            )}
+            {event.type && (
+              <span className="text-[10.5px] font-semibold tracking-wide uppercase px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-500 capitalize">
+                {event.type}
+              </span>
+            )}
+          </div>
+
+          {/* Description */}
+          {event.description && (
+            <p className="text-[12.5px] text-gray-400 leading-relaxed line-clamp-2">
+              {event.description}
+            </p>
+          )}
+
+          {/* Meta info */}
+          <div className="flex flex-col gap-2 text-[12px] text-gray-500">
+            {/* Date */}
+            <div className="flex items-center gap-2">
+              <Calendar size={12} className="text-blue-500 shrink-0" />
+              <span>{formatDate(event.date || event.start_datetime)}</span>
+            </div>
+
+            {/* Time */}
+            {(event.startTime || event.endTime) && (
+              <div className="flex items-center gap-2">
+                <Clock size={12} className="text-violet-500 shrink-0" />
+                <span>
+                  {formatTime(event.startTime)}
+                  {event.endTime ? ` – ${formatTime(event.endTime)}` : ""}
+                </span>
+              </div>
+            )}
+
+            {/* Location */}
+            {(event.location || event.venue) && (
+              <div className="flex items-center gap-2">
+                <MapPin size={12} className="text-rose-500 shrink-0" />
+                <span className="truncate">{event.location || event.venue}</span>
+              </div>
+            )}
+
+            {/* Total Seats */}
+            {event.totalSeats && (
+              <div className="flex items-center gap-2">
+                <Users size={12} className="text-emerald-500 shrink-0" />
+                <span>{event.totalSeats} seats available</span>
+              </div>
+            )}
+
+            {/* Speakers */}
+            {event.speakers && (
+              <div className="flex items-start gap-2">
+                <Layers size={12} className="text-amber-500 shrink-0 mt-0.5" />
+                <span className="line-clamp-1">{event.speakers}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Footer CTA */}
+          <div className="mt-auto pt-3 border-t border-gray-100">
             <button
-              onClick={handleSaveEvent}
-              className={`ec-btn ec-btn-save ${isSaved ? "saved" : ""} ${justSaved ? "pop" : ""}`}
+              onClick={(e) => { e.stopPropagation(); handleViewDetails(); }}
+              className="w-full text-[12.5px] font-semibold bg-slate-900 hover:bg-blue-600 text-white py-2.5 rounded-xl transition-colors duration-200"
             >
-              <Heart size={14} fill={isSaved ? "white" : "none"} strokeWidth={isSaved ? 0 : 2} />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); setShareModalOpen(true); }}
-              className="ec-btn ec-btn-share"
-            >
-              <Share2 size={14} />
-            </button>
-          </div>
-        </div>
-
-        <div className="ec-body">
-          <h2 className="ec-title">{event.title}</h2>
-          <p className="ec-desc">{event.description || "No description available."}</p>
-          <div className="ec-meta">
-            <div className="ec-meta-row">
-              <Calendar size={12} color="#3b82f6" />
-              <span>{formatDate(event.start_datetime || event.date)}</span>
-            </div>
-            <div className="ec-meta-row">
-              <MapPin size={12} color="#ef4444" />
-              <span>{event.venue || event.location || "Location not specified"}</span>
-            </div>
-          </div>
-          <div className="ec-footer">
-            <div className="ec-views">
-              <Eye size={12} />
-              <span>{formatViews(views)} views</span>
-            </div>
-            <button className="ec-cta" onClick={(e) => { e.stopPropagation(); handleViewDetails(); }}>
               View Details →
             </button>
           </div>
         </div>
       </div>
 
+      {/* Share Modal */}
       {shareModalOpen && (
-        <div className="ec-modal-bg" onClick={() => setShareModalOpen(false)}>
-          <div className="ec-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="ec-modal-close" onClick={() => setShareModalOpen(false)}>
+        <div
+          className="fixed inset-0 bg-black/45 backdrop-blur-md flex items-center justify-center z-[9999] p-5 animate-[fadeIn_0.18s_ease]"
+          onClick={() => setShareModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl p-7 w-full max-w-xs relative shadow-[0_24px_64px_rgba(0,0,0,0.18)] animate-[slideUp_0.25s_cubic-bezier(0.34,1.56,0.64,1)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShareModalOpen(false)}
+              className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-400 text-gray-400 flex items-center justify-center transition-colors"
+            >
               <X size={13} />
             </button>
-            <p className="ec-modal-title">Share Event</p>
-            <p className="ec-modal-sub">Tell your friends about this event</p>
-            <div className="ec-share-list">
-              <button className="ec-share-btn ec-fb" onClick={() => handleShare("facebook")}>
-                <div className="ec-share-icon">f</div>
+            <p className="text-[17px] font-bold text-gray-900 mb-1">Share Event</p>
+            <p className="text-[12px] text-gray-400 mb-5">Tell your friends about this event</p>
+            <div className="flex flex-col gap-2">
+              <button onClick={() => handleShare("facebook")} className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 text-blue-700 hover:translate-x-1 transition-transform text-[13.5px] font-medium">
+                <div className="w-8 h-8 rounded-lg bg-[#1877f2] text-white flex items-center justify-center font-black text-sm">f</div>
                 Share on Facebook
               </button>
-              <button className="ec-share-btn ec-wa" onClick={() => handleShare("whatsapp")}>
-                <div className="ec-share-icon">💬</div>
+              <button onClick={() => handleShare("whatsapp")} className="flex items-center gap-3 p-3 rounded-xl bg-green-50 text-green-700 hover:translate-x-1 transition-transform text-[13.5px] font-medium">
+                <div className="w-8 h-8 rounded-lg bg-[#25d366] text-white flex items-center justify-center text-sm">💬</div>
                 Share on WhatsApp
               </button>
-              <button className="ec-share-btn ec-em" onClick={() => handleShare("email")}>
-                <div className="ec-share-icon">✉</div>
+              <button onClick={() => handleShare("email")} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 text-gray-700 hover:translate-x-1 transition-transform text-[13.5px] font-medium">
+                <div className="w-8 h-8 rounded-lg bg-gray-700 text-white flex items-center justify-center text-sm">✉</div>
                 Share via Email
               </button>
             </div>
