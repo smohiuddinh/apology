@@ -18,7 +18,7 @@ export default function Navbar({ user, onLogout }) {
 
   const navLinks = [
     { name: "Home", path: "/" },
-  { name: "Events", path: "#featured-events" },
+  { name: "Events", path: "/featured-events" },
     { name: "About", path: "/About" },
     { name: "Contact", path: "/contact" },
 

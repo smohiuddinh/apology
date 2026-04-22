@@ -6,12 +6,13 @@ import AuthPage from "./components/auth";
 import About from './components/About';
 import Contact from "./components/contact";
 import EventDetails from './components/event-details';
+import AllEvents from "./components/FeaturedEvents";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/dashboard" element={<EventManagement />} />
-        <Route path="/featured-events" element={<FeaturedEvents />} />
+        <Route path="/featured-events" element={<AllEvents />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<AuthPage />} />
 
